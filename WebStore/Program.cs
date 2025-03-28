@@ -1,30 +1,43 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using WebStore.Data;
+using WebStore.Assignments;
+using WebStore.Entities;
 
-var optionsBuilder = new DbContextOptionsBuilder<WebStoreContext>();
-optionsBuilder.UseNpgsql(
-    "Host=localhost;Database=WebStore;Username=postgres;Password=mypassword"
-);
-
-
-using var context = new WebStoreContext(optionsBuilder.Options);
-
-
-
-var orders = context.Orders
-                    .Include(o => o.Customer)
-                    .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                    .ToList();
-
-foreach (var order in orders)
+namespace WebStore
 {
-    System.Console.WriteLine(
-        $"Order {order.OrderId} by {order.Customer?.FirstName} " +
-        $"{order.Customer?.LastName}, items: {order.OrderItems?.Count}"
-    );
-}
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            
 
-System.Console.WriteLine("Press any key to exit...");
-System.Console.ReadKey();
+            using var context = new WebStoreContext();
+
+
+            var Assigments = new LinqQueriesAssignment(context);
+
+            await Assigments.Task01_ListAllCustomers();
+
+            await Assigments.Task02_ListOrdersWithItemCount();
+
+            await Assigments.Task03_ListProductsByDescendingPrice();
+
+            await Assigments.Task04_ListPendingOrdersWithTotalPrice();
+
+            await Assigments.Task05_OrderCountPerCustomer();
+
+            await Assigments.Task06_Top3CustomersByOrderValue();
+
+            await Assigments.Task07_RecentOrders();
+
+            await Assigments.Task08_TotalSoldPerProduct();
+
+            await Assigments.Task09_DiscountedOrders();
+
+            await Assigments.Task10_AdvancedQueryExample();
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+    }
+}

@@ -2,7 +2,9 @@
 
 namespace WebStore.Controllers
 {
-    /*
+    /* Example implementation of API controller containing endpoints that could be accessed by client
+
+    
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController
