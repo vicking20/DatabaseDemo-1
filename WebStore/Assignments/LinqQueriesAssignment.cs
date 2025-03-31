@@ -22,6 +22,8 @@ namespace WebStore.Assignments
     public class LinqQueriesAssignment
     {
 
+        /* TODO: Uncomment this code after generating the entity models
+
         private readonly WebStoreContext _dbContext;
 
         public LinqQueriesAssignment(WebStoreContext context)
@@ -39,8 +41,6 @@ namespace WebStore.Assignments
             // TODO: Write a LINQ query that fetches all customers
             //       and prints their names + emails to the console.
             // HINT: context.Customers
-
-            /* Uncomment this code after generating the entity models
             
             var customers = await _dbContext.Customers
                // .AsNoTracking() // optional for read-only
@@ -53,7 +53,7 @@ namespace WebStore.Assignments
                 Console.WriteLine($"{c.FirstName} {c.LastName} - {c.Email}");
             }
 
-            */
+            
         }
 
         /// <summary>
@@ -212,5 +212,6 @@ namespace WebStore.Assignments
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 10: Advanced Query Example ===");
         }
+        */
     }
 }

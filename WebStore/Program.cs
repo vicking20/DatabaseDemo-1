@@ -9,7 +9,8 @@ namespace WebStore
     {
         static async Task Main(string[] args)
         {
-            
+
+            /* TODO: Uncomment this code after generating the entity models
 
             using var context = new WebStoreContext();
 
@@ -35,6 +36,7 @@ namespace WebStore
             await Assigments.Task09_DiscountedOrders();
 
             await Assigments.Task10_AdvancedQueryExample();
+            */
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
