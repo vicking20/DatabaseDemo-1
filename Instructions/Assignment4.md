@@ -240,13 +240,13 @@ VALUES
 
 ---
 
-## **Submission Requirements**
+## **Submission Requirements and evaluation**
 
-1. **Updated Entity Classes**:
+1. **Updated Entity Classes (max 2 points)**:
    - `Carrier.cs` file and updated `Order.cs`.
-2. **Migrations**:
+2. **Migrations (max 2 points)**:
    - Include your **baseline** migration (empty) if needed, plus the new **AddCarrierTable** migration in source control.
-3. **Manual SQL Scripts**:
+3. **Manual SQL Scripts (max 1 point)**:
    - Provide new **INSERT** and **UPDATE** statements as `.sql` files.
 
 ---
