@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-//using WebStore.Entities;
+using WebStore.Entities;
 
 namespace WebStore.Assignments
 {
@@ -22,8 +22,6 @@ namespace WebStore.Assignments
     public class LinqQueriesAssignment
     {
 
-        /* TODO: Uncomment this code after generating the entity models
-
         private readonly WebStoreContext _dbContext;
 
         public LinqQueriesAssignment(WebStoreContext context)
@@ -41,19 +39,16 @@ namespace WebStore.Assignments
             // TODO: Write a LINQ query that fetches all customers
             //       and prints their names + emails to the console.
             // HINT: context.Customers
-            
-            var customers = await _dbContext.Customers
-               // .AsNoTracking() // optional for read-only
-               .ToListAsync();
-
             Console.WriteLine("=== TASK 01: List All Customers ===");
+
+            var customers = await _dbContext.Customers
+                // .AsNoTracking() // optional for read-only
+                .ToListAsync();
 
             foreach (var c in customers)
             {
                 Console.WriteLine($"{c.FirstName} {c.LastName} - {c.Email}");
             }
-
-            
         }
 
         /// <summary>
@@ -74,6 +69,19 @@ namespace WebStore.Assignments
 
             Console.WriteLine(" ");
             Console.WriteLine("=== TASK 02: List Orders With Item Count ===");
+
+            var orders = await _dbContext.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+
+
+            foreach (var order in orders)
+            {
+                var itemCount = order.OrderItems?.Sum(oi => oi.Quantity) ?? 0;
+                Console.WriteLine($"Order #{order.OrderId} by {order.Customer?.FirstName} {order.Customer?.LastName} " +
+                                         $"| Status: {order.OrderStatus} | Items Count: {itemCount}");
+            }
         }
 
         /// <summary>
@@ -87,6 +95,16 @@ namespace WebStore.Assignments
             // HINT: context.Products.OrderByDescending(p => p.Price)
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 03: List Products By Descending Price ===");
+
+            var products = await _dbContext.Products
+                .OrderByDescending(p => p.Price)
+                .ToListAsync();
+
+
+            foreach (var p in products)
+            {
+                Console.WriteLine($"{p.ProductName} - {p.Price:c}");
+            }
         }
 
         /// <summary>
@@ -105,6 +123,28 @@ namespace WebStore.Assignments
             //       (oi.UnitPrice * oi.Quantity) - oi.Discount
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 04: List Pending Orders With Total Price ===");
+
+            var pendingOrders = await _dbContext.Orders
+                .Where(o => o.OrderStatus == "Pending")
+                .Include(o => o.Customer)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ToListAsync();
+
+
+            foreach (var order in pendingOrders)
+            {
+                decimal total = 0;
+                if (order.OrderItems != null)
+                {
+                    total = order.OrderItems.Sum(oi =>
+                        (oi.UnitPrice ?? 0) * oi.Quantity - (oi.Discount ?? 0));
+                }
+
+                Console.WriteLine(
+                    $"Order #{order.OrderId} - {order.Customer?.FirstName} {order.Customer?.LastName} " +
+                    $"| OrderDate: {order.OrderDate} | Total: {total:c}");
+            }
         }
 
         /// <summary>
@@ -124,6 +164,21 @@ namespace WebStore.Assignments
             //     then group by customer ID or by the customer entity.
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 05: Order Count Per Customer ===");
+
+            var results = await _dbContext.Customers
+                .Select(c => new
+                {
+                    c.FirstName,
+                    c.LastName,
+                    OrderCount = c.Orders.Count
+                })
+                .ToListAsync();
+
+
+            foreach (var item in results)
+            {
+                Console.WriteLine($"{item.FirstName} {item.LastName}: Orders = {item.OrderCount}");
+            }
         }
 
         /// <summary>
@@ -145,6 +200,24 @@ namespace WebStore.Assignments
             //         4) Take(3)
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 06: Top 3 Customers By Order Value ===");
+
+            var query = await _dbContext.Customers
+                .Select(c => new
+                {
+                    FullName = c.FirstName + " " + c.LastName,
+                    TotalValue = c.Orders
+                        .SelectMany(o => o.OrderItems)
+                        .Sum(oi => (oi.UnitPrice ?? 0) * oi.Quantity - (oi.Discount ?? 0))
+                })
+                .OrderByDescending(x => x.TotalValue)
+                .Take(3)
+                .ToListAsync();
+
+
+            foreach (var item in query)
+            {
+                Console.WriteLine($"{item.FullName} - TotalValue: {item.TotalValue:c}");
+            }
         }
 
         /// <summary>
@@ -157,6 +230,19 @@ namespace WebStore.Assignments
             //       Output ID, date, and the customer's name.
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 07: Recent Orders ===");
+
+            var cutoffDate = DateTime.Now.AddDays(-100);
+
+            var recentOrders = await _dbContext.Orders
+                .Where(o => o.OrderDate >= cutoffDate)
+                .Include(o => o.Customer)
+                .ToListAsync();
+
+            foreach (var order in recentOrders)
+            {
+                Console.WriteLine($"Order #{order.OrderId} - {order.OrderDate} " +
+                                         $"- Customer: {order.Customer?.FirstName} {order.Customer?.LastName}");
+            }
         }
 
         /// <summary>
@@ -171,6 +257,21 @@ namespace WebStore.Assignments
             //       Summation of quantity.
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 08: Total Sold Per Product ===");
+
+            var productSales = await _dbContext.Products
+                .Select(p => new
+                {
+                    p.ProductId,
+                    p.ProductName,
+                    TotalSold = p.OrderItems.Sum(oi => oi.Quantity)
+                })
+                .OrderByDescending(x => x.TotalSold)
+                .ToListAsync();
+
+            foreach (var item in productSales)
+            {
+                Console.WriteLine($"{item.ProductName} - Sold {item.TotalSold} items");
+            }
         }
 
         /// <summary>
@@ -183,6 +284,27 @@ namespace WebStore.Assignments
             //       Display order details, plus the discounted products.
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 09: Discounted Orders ===");
+
+            var discountedOrders = await _dbContext.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Where(o => o.OrderItems.Any(oi => (oi.Discount ?? 0) > 0))
+                .ToListAsync();
+
+
+            foreach (var order in discountedOrders)
+            {
+                var discountedItems = order.OrderItems
+                    .Where(oi => (oi.Discount ?? 0) > 0)
+                    .Select(oi => oi.Product?.ProductName)
+                    .ToList();
+
+                Console.WriteLine(
+                    $"Order #{order.OrderId} (Customer: {order.Customer?.FirstName} {order.Customer?.LastName}) " +
+                    $"Discounted Products: {string.Join(", ", discountedItems)}"
+                );
+            }
         }
 
         /// <summary>
@@ -212,6 +334,5 @@ namespace WebStore.Assignments
             Console.WriteLine(" ");
             Console.WriteLine("=== Task 10: Advanced Query Example ===");
         }
-        */
     }
 }
