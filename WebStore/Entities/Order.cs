@@ -17,8 +17,15 @@ public partial class Order
 
     public int BillingAddressId { get; set; }
 
+    public int? CarrierId { get; set; }
+    
+    public virtual Carrier? Carrier { get; set; }
 
+    public string? TrackingNumber { get; set; }
 
+    public DateTime? ShippedDate { get; set; }
+    
+    public DateTime? DeliveredDate { get; set; }
 
     public virtual Address BillingAddress { get; set; } = null!;
 

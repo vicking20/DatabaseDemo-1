@@ -10,7 +10,7 @@ You have an existing **e-commerce** (e-store) project—possibly created via **s
 4. **Manually insert** data into the database to prove that your new fields work, rather than relying on the application code to seed or update.
 
 ---
-
+ 
 ## **Part A: EF Core Migration Initialization**
 
 **(Skip if you already have a Migrations folder and `__EFMigrationsHistory` table.)**
