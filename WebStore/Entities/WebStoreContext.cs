@@ -1,6 +1,9 @@
-﻿using System;
+﻿//WebStoreContext.cs
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using WebStore.Entities;
+using MyECommerce.Console.Entities;
 
 namespace WebStore.Entities;
 
@@ -41,6 +44,27 @@ public partial class WebStoreContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.HasPostgresEnum<DiscountType>(
+        schema: "public",       // or whatever schema you want
+        name: "discount_type"   // the name to use in PostgreSQL
+        );
+
+        modelBuilder.Entity<DiscountCode>(entity =>
+        {
+        entity.ToTable("discount_codes");
+
+        entity.HasKey(dc => dc.DiscountCodeId);
+
+        entity.Property(dc => dc.DiscountType)
+            .HasColumnType("discount_type");  // must match the name above
+
+        entity.Property(dc => dc.Code)
+            .HasMaxLength(50)
+            .IsRequired();
+        });
+
         modelBuilder.Entity<Address>(entity =>
         {
             entity.HasKey(e => e.AddressId).HasName("addresses_pkey");
@@ -176,6 +200,11 @@ public partial class WebStoreContext : DbContext
 
             entity.Property(o => o.DeliveredDate)
                 .HasColumnName("delivered_date");
+
+            entity.HasOne(o => o.DiscountCode)
+              .WithMany(dc => dc.Orders)
+              .HasForeignKey(o => o.DiscountCodeId)
+              .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Carrier>(entity =>

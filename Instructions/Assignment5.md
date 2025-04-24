@@ -17,7 +17,7 @@ We want to support **discount codes** (or coupon codes) in our e‐store, where 
         Percentage = 0,
         Flat = 1
     }
-   ```
+   ``` 
 
    This indicates:
 
@@ -143,7 +143,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
   ```
 
 ---
-
+ 
 ## **Part D: Generate & Apply Migrations**
 
 1. **Baseline Migration** (if needed, look Assignment4.md instructions for example)  

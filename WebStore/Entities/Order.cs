@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MyECommerce.Console.Entities;
 
 namespace WebStore.Entities;
 
@@ -26,6 +27,10 @@ public partial class Order
     public DateTime? ShippedDate { get; set; }
     
     public DateTime? DeliveredDate { get; set; }
+
+    public int? DiscountCodeId { get; set; }
+
+    public DiscountCode? DiscountCode { get; set; }
 
     public virtual Address BillingAddress { get; set; } = null!;
 
